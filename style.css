@@ -1,0 +1,36 @@
+:root {
+    --primary-color: #27ae60;
+    --dark-color: #1a1a1a;
+    --bg-color: #f4f7f6;
+}
+
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; direction: rtl; }
+header { background: var(--dark-color); color: white; text-align: center; padding: 40px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+header h1 { margin: 0; font-size: 2.5rem; letter-spacing: 2px; }
+
+.container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 40px; max-width: 1200px; margin: auto; }
+
+/* بطاقة المنتج */
+.card { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); transition: 0.3s ease; position: relative; overflow: hidden; }
+.card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+.product-img { width: 100%; height: 220px; object-fit: contain; margin-bottom: 15px; background: #fff; }
+.product-badge { background: #f1f2f6; color: #7f8c8d; font-size: 0.8rem; padding: 5px 12px; border-radius: 50px; display: inline-block; margin-bottom: 10px; }
+
+.price-box { margin: 15px 0; display: flex; justify-content: center; align-items: center; gap: 15px; }
+.new-price { color: var(--primary-color); font-weight: bold; font-size: 1.8rem; }
+.old-price { color: #e74c3c; text-decoration: line-through; font-size: 1.1rem; opacity: 0.7; }
+
+.order-btn { background: var(--primary-color); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: 0.3s; }
+.order-btn:hover { background: #219150; transform: scale(1.02); }
+
+/* النوافذ المنبثقة */
+.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; }
+.modal-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 450px; padding: 35px; border-radius: 25px; text-align: center; }
+
+input { width: 100%; padding: 14px; margin: 12px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; outline: none; transition: 0.3s; }
+input:focus { border-color: var(--primary-color); box-shadow: 0 0 8px rgba(39, 174, 96, 0.2); }
+#submitBtn { background: var(--primary-color); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+
+.close-icon { position: absolute; top: 20px; right: 25px; font-size: 30px; cursor: pointer; color: #95a5a6; }
+.checkmark-circle { width: 80px; height: 80px; border: 4px solid var(--primary-color); border-radius: 50%; display: inline-block; margin-bottom: 20px; }
+.done-btn { background: var(--dark-color); color: white; border: none; padding: 12px 40px; border-radius: 10px; margin-top: 25px; cursor: pointer; }
