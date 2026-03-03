@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login & Reset Password</title>
     <style>
-        /* التنسيقات الأساسية التي لديك */
         body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Segoe UI', sans-serif; color: white; }
         .login-box { width: 400px; padding: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; }
         .input-group { position: relative; margin-bottom: 30px; }
@@ -16,7 +15,6 @@
         .options { display: flex; justify-content: space-between; font-size: 12px; margin: 20px 0; }
         .options a { color: white; text-decoration: none; }
 
-        /* --- واجهة استعادة كلمة المرور (Modal) --- */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal { width: 350px; background: #2d3436; padding: 30px; border-radius: 15px; border: 1px solid #636e72; text-align: center; }
         .modal h3 { margin-top: 0; color: #5c67f2; }
@@ -61,13 +59,13 @@
             <div class="step" id="stepOTP">
                 <p>Enter the 6-digit code sent to your email</p>
                 <input type="text" id="otpCode" placeholder="Enter OTP">
-                <button onclick="showNewPassStep()">Verify Code</button>
+                <button onclick="verifyAndNext()" id="verifyBtn">Verify & Proceed</button>
             </div>
 
             <div class="step" id="stepNewPass">
                 <p>Enter your new strong password</p>
                 <input type="password" id="newPassword" placeholder="New Password">
-                <button onclick="submitNewPassword()">Update Password</button>
+                <button onclick="submitNewPassword()" id="updateBtn">Update Password</button>
             </div>
 
             <button class="close-btn" onclick="closeResetModal()">Cancel</button>
@@ -75,65 +73,61 @@
     </div>
 
 <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbw8RJtznp3SxIBxPLLbFq2xlMVOAac2WxSfWhH9a-Lp9E2w5ZwOTaXSj-ZUatms3bac5g/exec"; // ضع رابط الـ Web App هنا
+    // هام: تأكد من تحديث هذا الرابط بعد كل New Deployment
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbzT4ARQ6dI1RZ5b7VC1uFSuPIQascJY5SjxZqL3817WDHZZrhNKahOj5XYkgu3FMSdztw/exec";
 
-    // --- وظائف المودال ---
     function openResetModal() { document.getElementById('resetOverlay').style.display = 'flex'; }
-    function closeResetModal() { location.reload(); }
+    function closeResetModal() { document.getElementById('resetOverlay').style.display = 'none'; }
 
     function switchStep(stepId) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
 
-    // --- المرحلة 1: طلب الرمز ---
     function requestOTP() {
         const email = document.getElementById('resetEmail').value;
         if (!email) return alert("Please enter email");
-
         const btn = document.getElementById('sendOtpBtn');
         btn.innerText = "Checking..."; btn.disabled = true;
 
         callApi(`?action=sendOTP&email=${encodeURIComponent(email)}`, (res) => {
             if (res.result === "OTPSent") {
-                alert("Success! Check your email inbox.");
+                alert("Success! Check your inbox.");
                 switchStep('stepOTP');
-            } else if (res.result === "WrongEmail") {
-                alert("Email not found in our records!");
-                btn.innerText = "Send Code"; btn.disabled = false;
             } else {
-                alert("Error sending mail.");
+                alert("Email not found!");
                 btn.innerText = "Send Code"; btn.disabled = false;
             }
         });
     }
 
-    // --- المرحلة 2: التحقق الشكلي من الرمز ---
-    function showNewPassStep() {
+    // هنا التصليح: التحقق من الرمز يحدث عند الضغط على Update Password مباشرة لضمان الدقة
+    function verifyAndNext() {
         const otp = document.getElementById('otpCode').value;
         if (otp.length < 6) return alert("Enter valid 6-digit code");
         switchStep('stepNewPass');
     }
 
-    // --- المرحلة 3: الإرسال النهائي وتغيير الباسورد ---
     function submitNewPassword() {
         const otp = document.getElementById('otpCode').value;
         const newPass = document.getElementById('newPassword').value;
+        const btn = document.getElementById('updateBtn');
 
         if (!newPass) return alert("Enter new password");
+        btn.innerText = "Updating..."; btn.disabled = true;
 
         callApi(`?action=resetPass&otp=${otp}&newPass=${encodeURIComponent(newPass)}`, (res) => {
             if (res.result === "ResetSuccess") {
-                alert("Password changed successfully! You can login now.");
-                closeResetModal();
+                alert("Password changed! You can login now.");
+                location.reload();
             } else {
-                alert("Invalid OTP! Please try again.");
+                alert("Invalid OTP! Try again.");
+                btn.innerText = "Update Password"; btn.disabled = false;
                 switchStep('stepOTP');
             }
         });
     }
 
-    // --- وظيفة الـ API (JSONP) ---
     function callApi(params, callbackFn) {
         const callbackName = 'cb_' + Math.floor(Math.random() * 1000000);
         window[callbackName] = function(res) {
@@ -146,20 +140,18 @@
         document.body.appendChild(script);
     }
 
-    // --- تسجيل الدخول العادي ---
     document.getElementById('loginForm').onsubmit = function(e) {
         e.preventDefault();
         const user = document.getElementById('username').value;
         const pass = document.getElementById('password').value;
         const btn = document.getElementById('loginBtn');
-        
         btn.innerText = "VERIFYING..."; btn.disabled = true;
 
         callApi(`?action=login&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`, (res) => {
             if (res.result === "Success") {
                 window.location.href = "admin-dashboard.html";
             } else {
-                alert("Access Denied: Wrong Username or Password");
+                alert("Access Denied!");
                 btn.innerText = "LOGIN"; btn.disabled = false;
             }
         });

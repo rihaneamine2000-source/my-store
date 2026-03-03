@@ -1,5 +1,5 @@
 const csvURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTBHhkKDmlaHCIVPN5jM4Va7ybGVVSauPBp2nIJ4XrH977e7e3rVCpEjlqzbNRgF4tl6KK8PfW1_Bsy/pub?output=csv';
-const scriptURL = 'https://script.google.com/macros/s/AKfycbw8RJtznp3SxIBxPLLbFq2xlMVOAac2WxSfWhH9a-Lp9E2w5ZwOTaXSj-ZUatms3bac5g/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbzT4ARQ6dI1RZ5b7VC1uFSuPIQascJY5SjxZqL3817WDHZZrhNKahOj5XYkgu3FMSdztw/exec';
 
 async function loadProducts() {
     try {
