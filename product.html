@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض المنتج | Amine Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2ed573;
+            --accent: #ff4757;
+            --dark: #2f3542;
+            --light: #f1f2f6;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 15px; }
+
+        /* التصميم المتجاوب */
+        .product-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .gallery-part { flex: 1; min-width: 320px; padding: 20px; }
+        .info-part { flex: 1; min-width: 320px; padding: 40px; background: #fafafa; }
+
+        .main-img { width: 100%; height: 400px; object-fit: contain; border-radius: 15px; }
+        
+        .thumbs { display: flex; gap: 10px; margin-top: 15px; justify-content: center; }
+        .thumb { width: 60px; height: 60px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; }
+        .thumb.active { border-color: var(--accent); }
+
+        .price-box { margin: 20px 0; }
+        .price { font-size: 35px; font-weight: 800; color: var(--accent); }
+        .old-price { text-decoration: line-through; color: #888; margin-right: 15px; }
+
+        .btn-order {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 22px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-order:hover { transform: scale(1.02); background: #26af5f; }
+
+        /* قسم الوصف */
+        .description-area { background: white; margin-top: 30px; padding: 30px; border-radius: 20px; }
+        .description-area img { width: 100%; margin-top: 20px; border-radius: 10px; }
+
+        /* الاستمارة */
+        .form-section {
+            background: var(--dark);
+            color: white;
+            padding: 50px 20px;
+            border-radius: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .form-card { max-width: 500px; margin: 20px auto; background: white; padding: 30px; border-radius: 15px; }
+        .form-card input, .form-card select {
+            width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: 'Cairo';
+        }
+        .btn-confirm { width: 100%; background: var(--accent); color: white; border: none; padding: 18px; font-size: 20px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .info-part { padding: 20px; text-align: center; }
+            .main-img { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loading" style="text-align:center; padding: 50px;">جاري تحميل تفاصيل المنتج...</div>
+    
+    <div id="product-content" style="display: none;">
+        <div class="product-wrapper">
+            <div class="gallery-part">
+                <img id="mainImage" src="" class="main-img">
+                <div id="thumbnails" class="thumbs"></div>
+            </div>
+            <div class="info-part">
+                <h1 id="productTitle">اسم المنتج</h1>
+                <div class="price-box">
+                    <span id="productPrice" class="price"></span>
+                    <span id="oldPrice" class="old-price"></span>
+                </div>
+                <ul id="features" style="text-align: right; padding-right: 20px;">
+                    </ul>
+                <button class="btn-order" onclick="scrollToForm()">اطلب الآن - الدفع عند الاستلام</button>
+            </div>
+        </div>
+
+        <div class="description-area" id="longDescription">
+            <h2>تفاصيل المنتج</h2>
+            <div id="descText"></div>
+            <div id="descImages"></div>
+        </div>
+
+        <div class="form-section" id="order-form">
+            <h2>أدخل معلوماتك للطلب</h2>
+            <div class="form-card">
+                <form id="purchaseForm">
+                    <input type="text" id="custName" placeholder="الاسم الكامل" required>
+                    <input type="tel" id="custPhone" placeholder="رقم الهاتف" required>
+                    <select id="custCity">
+                        <option>الجزائر العاصمة</option>
+                        <option>وهران</option>
+                        <option>قسنطينة</option>
+                        <option>سطيف</option>
+                        </select>
+                    <button type="submit" class="btn-confirm">تأكيد الشراء</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. رابط الـ Web App الخاص بك من Google Sheets (استبدله برابطك)
+    const scriptURL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
+    // 2. دالة لجلب البيانات بناءً على الـ ID في الرابط
+    async function loadProduct() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (!productId) {
+            document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>عذراً، لم يتم العثور على المنتج</h2>";
+            return;
+        }
+
+        try {
+            // جلب البيانات من الشيت (نفترض أنك عدلت الـ API ليدعم البحث بالـ ID)
+            const response = await fetch(scriptURL + "?action=getProduct&id=" + productId);
+            const product = await response.json();
+
+            // ملء البيانات في الصفحة
+            document.getElementById('productTitle').innerText = product.name;
+            document.getElementById('productPrice').innerText = product.price + " دج";
+            document.getElementById('oldPrice').innerText = (product.price * 1.4).toFixed(0) + " دج";
+            document.getElementById('mainImage').src = product.images[0];
+            
+            // إنشاء المصغرات
+            const thumbContainer = document.getElementById('thumbnails');
+            product.images.forEach((img, index) => {
+                const imgEl = document.createElement('img');
+                imgEl.src = img;
+                imgEl.className = 'thumb' + (index === 0 ? ' active' : '');
+                imgEl.onclick = function() {
+                    document.getElementById('mainImage').src = this.src;
+                    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                };
+                thumbContainer.appendChild(imgEl);
+            });
+
+            // ملء الوصف
+            document.getElementById('descText').innerText = product.description;
+            
+            // إظهار المحتوى وإخفاء التحميل
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('product-content').style.display = 'block';
+
+        } catch (error) {
+            console.error('Error:', error);
+            // للتجربة فقط إذا لم يكن الشيت جاهزاً، سنعرض بيانات وهمية
+            showDemoData(); 
+        }
+    }
+
+    function showDemoData() {
+        document.getElementById('productTitle').innerText = "منتج تجريبي (يرجى ربط الشيت)";
+        document.getElementById('productPrice').innerText = "4500 دج";
+        document.getElementById('mainImage').src = "https://via.placeholder.com/400";
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('product-content').style.display = 'block';
+    }
+
+    function scrollToForm() {
+        document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.onload = loadProduct;
+</script>
+
+</body>
+</html>
