@@ -3,42 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amine Store | متجري الاحترافي</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Amine Store | المتجر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        header { background: #fff; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 10px; }
+        
+        /* تصميم البطاقة */
+        .card { background: #fff; border-radius: 10px; padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .product-img { width: 100%; height: 200px; object-fit: contain; cursor: pointer; }
+        .price-box { margin: 10px 0; font-weight: bold; }
+        .new-price { color: #ff4757; font-size: 20px; }
+        .old-price { text-decoration: line-through; color: #888; margin-right: 10px; }
+        
+        /* الأزرار */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .order-btn { background: #2ed573; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .details-btn { background: #f1f2f6; color: #2f3542; border: 1px solid #ddd; padding: 8px; border-radius: 5px; text-decoration: none; font-size: 14px; }
+
+        /* المودال */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 1000; }
+        .modal-card { background: #fff; width: 90%; max-width: 400px; margin: 100px auto; padding: 20px; border-radius: 10px; position: relative; }
+        .modal-card input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        #submitBtn { width: 100%; background: #ff4757; color: white; border: none; padding: 15px; cursor: pointer; font-weight: bold; }
+
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 10px; } }
+    </style>
 </head>
 <body>
+
     <header>
         <h1>Amine Store</h1>
-        <p>جودة، أناقة، وسرعة في التوصيل</p>
     </header>
-    
+
     <main class="container" id="products-grid">
-        <div id="loader">جاري تحميل أحدث المنتجات...</div>
+        <div id="loader">جاري تحميل المنتجات...</div>
     </main>
 
     <div id="modalOverlay" class="overlay">
         <div class="modal-card">
-            <span class="close-icon" onclick="closeForm()">&times;</span>
-            <h2>تأكيد الطلب</h2>
+            <h2 style="text-align:center">تأكيد الطلب</h2>
             <form id="orderForm">
                 <input type="hidden" id="p_id" name="Product_ID">
                 <input type="hidden" id="p_name" name="Product_Name">
-                
-                <input type="text" name="Customer_Name" placeholder="اسمك الكامل" required>
-                <input type="tel" name="Phone_Number" placeholder="رقم هاتفك" required>
-                <input type="text" name="Shipping_Address" placeholder="عنوانك الكامل (الولاية/البلدية)" required>
-                
-                <button type="submit" id="submitBtn">تأكيد الشراء الآن</button>
+                <input type="text" name="Customer_Name" placeholder="الاسم الكامل" required>
+                <input type="tel" name="Phone_Number" placeholder="رقم الهاتف" required>
+                <input type="text" name="Address" placeholder="الولاية / البلدية" required>
+                <button type="submit" id="submitBtn">تأكيد الشراء</button>
             </form>
-        </div>
-    </div>
-
-    <div id="successOverlay" class="overlay">
-        <div class="modal-card success-card">
-            <div class="checkmark-circle"><div class="checkmark draw"></div></div>
-            <h2>تم استلام طلبك بنجاح!</h2>
-            <p id="orderSummary"></p>
-            <button onclick="closeSuccess()" class="done-btn">إغلاق</button>
+            <button onclick="closeForm()" style="width:100%; background:none; border:none; color:red; margin-top:10px; cursor:pointer">إلغاء</button>
         </div>
     </div>
 

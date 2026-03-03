@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المنتج | Amine Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2ed573;
+            --accent: #ff4757;
+            --dark: #2f3542;
+            --bg: #f1f2f6;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 0;
+            color: var(--dark);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 15px; }
+
+        /* لودر التحميل */
+        #loading-screen { text-align: center; padding: 100px; font-weight: bold; }
+
+        .product-card {
+            display: flex; flex-wrap: wrap;
+            background: white; border-radius: 20px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .gallery-part { flex: 1; min-width: 320px; padding: 20px; text-align: center; }
+        .info-part { flex: 1; min-width: 320px; padding: 30px; background: #fafafa; }
+
+        .main-img { 
+            width: 100%; height: 350px; 
+            object-fit: contain; border-radius: 15px; 
+            transition: 0.3s;
+        }
+        
+        .thumbs { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
+        .thumb { 
+            width: 65px; height: 65px; 
+            border: 2px solid #ddd; border-radius: 10px; 
+            cursor: pointer; object-fit: cover;
+        }
+        .thumb.active { border-color: var(--accent); }
+
+        h1 { font-size: 24px; margin-bottom: 10px; color: #1e272e; }
+
+        .price-box { margin: 20px 0; }
+        .price { font-size: 32px; font-weight: 800; color: var(--accent); }
+        .old-price { text-decoration: line-through; color: #a4b0be; margin-right: 15px; font-size: 18px; }
+
+        .features { padding: 0; list-style: none; margin: 20px 0; }
+        .features li { margin-bottom: 10px; display: flex; align-items: center; font-weight: 600; }
+        .features li::before { content: '✅'; margin-left: 10px; }
+
+        .btn-order {
+            width: 100%; background: var(--primary);
+            color: white; border: none; padding: 20px;
+            font-size: 20px; font-weight: 800;
+            border-radius: 12px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+            transition: 0.3s;
+        }
+
+        .description-section {
+            background: white; margin-top: 30px;
+            padding: 25px; border-radius: 20px;
+        }
+        .description-section img { width: 100%; margin-top: 15px; border-radius: 15px; }
+
+        .form-container {
+            background: var(--dark); color: white;
+            padding: 40px 20px; border-radius: 20px;
+            margin-top: 30px; text-align: center;
+        }
+        .form-card { max-width: 450px; margin: 25px auto 0; background: white; padding: 30px; border-radius: 15px; }
+        .form-card input, .form-card select {
+            width: 100%; padding: 15px; margin-bottom: 15px;
+            border: 1px solid #ddd; border-radius: 8px;
+            box-sizing: border-box; font-family: 'Cairo';
+        }
+        .btn-confirm { 
+            width: 100%; background: var(--accent); color: white;
+            border: none; padding: 18px; font-weight: 700;
+            border-radius: 8px; cursor: pointer; 
+        }
+
+        @media (max-width: 768px) {
+            .product-card { flex-direction: column; }
+            .info-part { text-align: center; }
+            .main-img { height: 280px; }
+            .features li { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">جاري تحميل تفاصيل المنتج...</div>
+
+<div class="container" id="main-content" style="display: none;">
+    <div class="product-card">
+        <div class="gallery-part">
+            <img id="mainImage" src="" class="main-img">
+            <div id="thumbsContainer" class="thumbs">
+                </div>
+        </div>
+
+        <div class="info-part">
+            <span style="color: var(--accent); font-weight: bold;">🔥 متوفر الآن</span>
+            <h1 id="p-title">اسم المنتج</h1>
+            <div class="price-box">
+                <span id="p-price" class="price"></span>
+                <span id="p-old-price" class="old-price"></span>
+            </div>
+            <ul class="features">
+                <li>منتج أصلي 100%</li>
+                <li>ضمان الجودة</li>
+                <li>توصيل سريع للدفع عند الاستلام</li>
+            </ul>
+            <button class="btn-order" onclick="scrollToForm()">اطلب الآن - توصيل سريع</button>
+        </div>
+    </div>
+
+    <div class="description-section">
+        <h2>تفاصيل المنتج</h2>
+        <p id="p-desc">هذا المنتج متوفر بجودة عالية وسعر منافس.</p>
+        <div id="desc-images">
+            </div>
+    </div>
+
+    <div class="form-container" id="order-form">
+        <h2>تأكيد الطلب</h2>
+        <div class="form-card">
+            <form id="sheetOrderForm">
+                <input type="hidden" id="hidden_p_name" name="Product_Name">
+                <input type="text" name="Customer_Name" placeholder="الاسم الكامل" required>
+                <input type="tel" name="Phone_Number" placeholder="رقم الهاتف" required>
+                <input type="text" name="Address" placeholder="الولاية والبلدية" required>
+                <button type="submit" id="submitBtn" class="btn-confirm">إرسال الطلب</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // روابطك الخاصة
+    const csvURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTBHhkKDmlaHCIVPN5jM4Va7ybGVVSauPBp2nIJ4XrH977e7e3rVCpEjlqzbNRgF4tl6KK8PfW1_Bsy/pub?output=csv';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyK55kIRsBglAVQjOop8BH6o5YWyulU9o6iHZ6exibBM-7TMhHqVfhsfPVROO-TKdyHOA/exec';
+
+    async function loadProduct() {
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('id');
+
+        try {
+            const response = await fetch(csvURL + "&t=" + new Date().getTime());
+            const data = await response.text();
+            const rows = data.split(/\r?\n/).filter(row => row.trim() !== "");
+
+            let product = null;
+            for (let i = 1; i < rows.length; i++) {
+                const cols = rows[i].includes(';') ? rows[i].split(';') : rows[i].split(',');
+                if (cols[0]?.replace(/"/g, "").trim() === productId) {
+                    product = {
+                        name: cols[1].replace(/"/g, "").trim(),
+                        priceN: cols[2].replace(/"/g, "").trim(),
+                        priceO: cols[3].replace(/"/g, "").trim(),
+                        images: cols[4]?.replace(/"/g, "").trim().split(';') || []
+                    };
+                    break;
+                }
+            }
+
+            if (product) {
+                renderProduct(product);
+            } else {
+                document.getElementById('loading-screen').innerText = "عذراً، المنتج غير موجود.";
+            }
+        } catch (e) {
+            document.getElementById('loading-screen').innerText = "خطأ في الاتصال بالبيانات.";
+        }
+    }
+
+    function renderProduct(p) {
+        document.getElementById('p-title').innerText = p.name;
+        document.getElementById('p-price').innerText = p.priceN + " دج";
+        if(p.priceO) document.getElementById('p-old-price').innerText = p.priceO + " دج";
+        document.getElementById('hidden_p_name').value = p.name;
+
+        // الصور
+        const mainImg = document.getElementById('mainImage');
+        mainImg.src = p.images[0];
+
+        const thumbsContainer = document.getElementById('thumbsContainer');
+        p.images.forEach((img, index) => {
+            const thumb = document.createElement('img');
+            thumb.src = img;
+            thumb.className = 'thumb' + (index === 0 ? ' active' : '');
+            thumb.onclick = function() {
+                mainImg.src = img;
+                document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            };
+            thumbsContainer.appendChild(thumb);
+            
+            // إضافة الصور أيضاً في قسم الوصف لتعطي انطباع "علي إكسبريس"
+            if(index > 0) {
+                const descImg = document.createElement('img');
+                descImg.src = img;
+                document.getElementById('desc-images').appendChild(descImg);
+            }
+        });
+
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+    }
+
+    function scrollToForm() {
+        document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // إرسال الطلب للشيت
+    document.getElementById('sheetOrderForm').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "جاري الإرسال...";
+        btn.disabled = true;
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(this), mode: 'no-cors' })
+        .then(() => {
+            alert("تم استلام طلبك بنجاح! سنتصل بك قريباً.");
+            this.reset();
+            btn.innerText = "تم الإرسال بنجاح ✅";
+        })
+        .catch(() => {
+            alert("حدث خطأ في الإرسال.");
+            btn.disabled = false;
+            btn.innerText = "إرسال الطلب";
+        });
+    };
+
+    window.onload = loadProduct;
+</script>
+
+</body>
+</html>

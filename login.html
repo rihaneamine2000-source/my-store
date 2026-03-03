@@ -3,146 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Login & Reset Password</title>
     <style>
-        /* إعدادات الخلفية والصفحة كاملة */
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-        }
-
-        /* صندوق الزجاج */
-        .login-box {
-            position: relative;
-            width: 400px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-        }
-
-        .login-box h2 {
-            margin: 0 0 30px;
-            font-size: 2em;
-            letter-spacing: 2px;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 30px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px 0;
-            font-size: 16px;
-            color: white;
-            border: none;
-            border-bottom: 1px solid white;
-            outline: none;
-            background: transparent;
-        }
-
-        .input-group label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding: 10px 0;
-            font-size: 16px;
-            color: white;
-            pointer-events: none;
-            transition: .5s;
-        }
-
-        .input-group input:focus ~ label,
-        .input-group input:valid ~ label {
-            top: -20px;
-            font-size: 12px;
-            color: #bdc3c7;
-        }
-
-        button {
-            position: relative;
-            display: inline-block;
-            padding: 10px 20px;
-            color: #fff;
-            background: #5c67f2;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: .5s;
-            width: 100%;
-        }
-
-        button:hover {
-            background: #4a54e1;
-            box-shadow: 0 0 10px #5c67f2;
-        }
-
-        .options {
-            display: flex;
-            justify-content: space-between;
-            color: white;
-            font-size: 14px;
-            margin: 20px 0;
-        }
-
+        /* التنسيقات الأساسية التي لديك */
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Segoe UI', sans-serif; color: white; }
+        .login-box { width: 400px; padding: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; }
+        .input-group { position: relative; margin-bottom: 30px; }
+        .input-group input { width: 100%; padding: 10px 0; font-size: 16px; color: white; border: none; border-bottom: 1px solid white; outline: none; background: transparent; }
+        .input-group label { position: absolute; top: 0; left: 0; padding: 10px 0; pointer-events: none; transition: .5s; }
+        .input-group input:focus ~ label, .input-group input:valid ~ label { top: -20px; font-size: 12px; color: #bdc3c7; }
+        button { width: 100%; padding: 12px; background: #5c67f2; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
+        .options { display: flex; justify-content: space-between; font-size: 12px; margin: 20px 0; }
         .options a { color: white; text-decoration: none; }
-        .options a:hover { text-decoration: underline; }
 
-        /* --- تنسيق رسالة الخطأ تحت الزر --- */
-        #error-msg {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(255, 71, 87, 0.2); /* أحمر شفاف */
-            border: 1px solid rgba(255, 71, 87, 0.4);
-            color: #ffcbd1;
-            font-size: 14px;
-            display: none; /* مخفية افتراضياً */
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .icon-x {
-            background: #ff4757;
-            color: white;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* --- واجهة استعادة كلمة المرور (Modal) --- */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { width: 350px; background: #2d3436; padding: 30px; border-radius: 15px; border: 1px solid #636e72; text-align: center; }
+        .modal h3 { margin-top: 0; color: #5c67f2; }
+        .modal p { font-size: 13px; color: #b2bec3; }
+        .modal input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #444; background: #1e272e; color: white; box-sizing: border-box; }
+        .modal .step { display: none; }
+        .modal .step.active { display: block; }
+        .close-btn { background: transparent; color: #ff7675; border: none; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="login-box">
         <h2>LOGIN</h2>
-        <form>
+        <form id="loginForm">
             <div class="input-group">
                 <input type="text" id="username" required>
                 <label>Username</label>
@@ -153,60 +42,128 @@
             </div>
             <div class="options">
                 <label><input type="checkbox"> Remember me</label>
-                <a href="#">Forgot Password?</a>
+                <a href="javascript:void(0)" onclick="openResetModal()">Forgot Password?</a>
             </div>
             <button type="submit" id="loginBtn">LOGIN</button>
-            
-            <div id="error-msg">
-                <span class="icon-x">✕</span>
-                <span id="error-text">Access Denied</span>
-            </div>
         </form>
     </div>
 
+    <div class="overlay" id="resetOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Reset Password</h3>
+            
+            <div class="step active" id="stepEmail">
+                <p>Enter your admin email to receive OTP</p>
+                <input type="email" id="resetEmail" placeholder="example@mail.com">
+                <button onclick="requestOTP()" id="sendOtpBtn">Send Code</button>
+            </div>
+
+            <div class="step" id="stepOTP">
+                <p>Enter the 6-digit code sent to your email</p>
+                <input type="text" id="otpCode" placeholder="Enter OTP">
+                <button onclick="showNewPassStep()">Verify Code</button>
+            </div>
+
+            <div class="step" id="stepNewPass">
+                <p>Enter your new strong password</p>
+                <input type="password" id="newPassword" placeholder="New Password">
+                <button onclick="submitNewPassword()">Update Password</button>
+            </div>
+
+            <button class="close-btn" onclick="closeResetModal()">Cancel</button>
+        </div>
+    </div>
+
 <script>
-    // رابط الـ Web App الخاص بك
-    var scriptUrl = "https://script.google.com/macros/s/AKfycbzgYjd7fNJaHgg-rbptutMStoozrjeHTqTRu5AZpxMIHgjNIGv7BgjcurnypOm8aqlyTA/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbw8RJtznp3SxIBxPLLbFq2xlMVOAac2WxSfWhH9a-Lp9E2w5ZwOTaXSj-ZUatms3bac5g/exec"; // ضع رابط الـ Web App هنا
 
-    document.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        var user = document.getElementById('username').value;
-        var pass = document.getElementById('password').value;
-        var button = document.getElementById('loginBtn');
-        var errorDiv = document.getElementById('error-msg');
-        var errorText = document.getElementById('error-text');
+    // --- وظائف المودال ---
+    function openResetModal() { document.getElementById('resetOverlay').style.display = 'flex'; }
+    function closeResetModal() { location.reload(); }
 
-        // إخفاء رسالة الخطأ السابقة
-        errorDiv.style.display = 'none';
-        
-        button.innerText = "VERIFYING...";
-        button.disabled = true;
+    function switchStep(stepId) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById(stepId).classList.add('active');
+    }
 
-        var callbackName = 'loginCallback';
-        window[callbackName] = function(response) {
-            if (response.result === "Success") {
-                // في حالة النجاح، يمكننا استخدام alert سريع أو تحويل مباشر
-                window.location.href = "admin-dashboard.html";
+    // --- المرحلة 1: طلب الرمز ---
+    function requestOTP() {
+        const email = document.getElementById('resetEmail').value;
+        if (!email) return alert("Please enter email");
+
+        const btn = document.getElementById('sendOtpBtn');
+        btn.innerText = "Checking..."; btn.disabled = true;
+
+        callApi(`?action=sendOTP&email=${encodeURIComponent(email)}`, (res) => {
+            if (res.result === "OTPSent") {
+                alert("Success! Check your email inbox.");
+                switchStep('stepOTP');
+            } else if (res.result === "WrongEmail") {
+                alert("Email not found in our records!");
+                btn.innerText = "Send Code"; btn.disabled = false;
             } else {
-                // إظهار رسالة الخطأ تحت الزر
-                errorText.innerText = "Wrong Username or Password";
-                errorDiv.style.display = 'flex';
-                
-                button.innerText = "LOGIN";
-                button.disabled = false;
+                alert("Error sending mail.");
+                btn.innerText = "Send Code"; btn.disabled = false;
             }
-            // تنظيف
+        });
+    }
+
+    // --- المرحلة 2: التحقق الشكلي من الرمز ---
+    function showNewPassStep() {
+        const otp = document.getElementById('otpCode').value;
+        if (otp.length < 6) return alert("Enter valid 6-digit code");
+        switchStep('stepNewPass');
+    }
+
+    // --- المرحلة 3: الإرسال النهائي وتغيير الباسورد ---
+    function submitNewPassword() {
+        const otp = document.getElementById('otpCode').value;
+        const newPass = document.getElementById('newPassword').value;
+
+        if (!newPass) return alert("Enter new password");
+
+        callApi(`?action=resetPass&otp=${otp}&newPass=${encodeURIComponent(newPass)}`, (res) => {
+            if (res.result === "ResetSuccess") {
+                alert("Password changed successfully! You can login now.");
+                closeResetModal();
+            } else {
+                alert("Invalid OTP! Please try again.");
+                switchStep('stepOTP');
+            }
+        });
+    }
+
+    // --- وظيفة الـ API (JSONP) ---
+    function callApi(params, callbackFn) {
+        const callbackName = 'cb_' + Math.floor(Math.random() * 1000000);
+        window[callbackName] = function(res) {
+            callbackFn(res);
             document.body.removeChild(script);
             delete window[callbackName];
         };
-
-        var script = document.createElement('script');
-        script.src = scriptUrl + "?username=" + encodeURIComponent(user) + 
-                     "&password=" + encodeURIComponent(pass) + 
-                     "&callback=" + callbackName;
+        const script = document.createElement('script');
+        script.src = scriptUrl + params + "&callback=" + callbackName;
         document.body.appendChild(script);
-    });
+    }
+
+    // --- تسجيل الدخول العادي ---
+    document.getElementById('loginForm').onsubmit = function(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
+        
+        btn.innerText = "VERIFYING..."; btn.disabled = true;
+
+        callApi(`?action=login&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`, (res) => {
+            if (res.result === "Success") {
+                window.location.href = "admin-dashboard.html";
+            } else {
+                alert("Access Denied: Wrong Username or Password");
+                btn.innerText = "LOGIN"; btn.disabled = false;
+            }
+        });
+    };
 </script>
 </body>
 </html>
